@@ -20,7 +20,7 @@ ARCHITECTURE behavior OF fsm IS
     TYPE states IS (inicial, jumps, opera);
     SIGNAL state : states;
     SIGNAL next_state : states := inicial;
-
+ 
 BEGIN
     PROCESS (clk, reset)
     BEGIN

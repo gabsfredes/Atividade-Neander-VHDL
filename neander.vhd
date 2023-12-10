@@ -21,17 +21,17 @@ ARCHITECTURE behavior OF neander IS
     TYPE valores IS ARRAY (0 TO 15) OF STD_LOGIC_VECTOR(7 DOWNTO 0);--vetor de 16 posições de 8 bits
 
     -- alterar aqui a memória, infelizmente não consegui implementar com leitura do arquivo
-    SIGNAL memoria : valores := (0 => "00001010",
-    1 => "00100101",
-    2 => "00110010",
-    3 => "01001010",
+    SIGNAL memoria : valores := (0 => "00000001",
+    1 => "00011010",
+    2 => "00100001",
+    3 => "01000000",
     4 => "00000000",
     5 => "00000000",
     6 => "00000000",
     7 => "00000000",
     8 => "00000000",
     9 => "00000000",
-    10 => "00101010",
+    10 => "00000000",
     11 => "00000000",
     12 => "00000000",
     13 => "00000000",
@@ -55,8 +55,6 @@ ARCHITECTURE behavior OF neander IS
     SIGNAL RDM : STD_LOGIC_VECTOR(7 DOWNTO 0); -- registrador de memoria
     SIGNAL flagZ : STD_LOGIC; -- flag se ACC = 0
     SIGNAL flagN : STD_LOGIC; -- flag se ACC < 0
-
-
     ----------------------------------------------
 BEGIN
     -- implementações das operações
@@ -80,12 +78,10 @@ BEGIN
     -- saidas
     Z <= flagZ;
     N <= flagN;
-
-
     PROCESS (clk, reset)
     BEGIN
         -- zera tudo pra não ter problema de lixo
-        IF reset = '0' THEN
+        IF reset = '1' THEN
             PC <= (OTHERS => '0');
             ACC <= (OTHERS => '0');
             RDM <= (OTHERS => '0');
@@ -99,9 +95,9 @@ BEGIN
                 RDM <= memoria(conv_integer(unsigned(PC)));
                 decoder <= RDM(7 DOWNTO 4); -- os 4 bits mais significativos do RDM são o decoder
             ELSE
-                    PC <= RDM(3 DOWNTO 0); -- os 4 bits menos significativos do RDM são o PC
-                    RDM <= memoria(conv_integer(unsigned(PC)));
-                    decoder <= RDM(7 DOWNTO 4);
+                PC <= RDM(3 DOWNTO 0); -- os 4 bits menos significativos do RDM são o PC
+                RDM <= memoria(conv_integer(unsigned(PC)));
+                decoder <= RDM(7 DOWNTO 4);
             END IF;
             IF en_ULA = '1' THEN
                 ACC <= MUX(3 DOWNTO 0);

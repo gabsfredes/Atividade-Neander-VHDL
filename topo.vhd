@@ -36,9 +36,10 @@ ARCHITECTURE behavior OF topo IS
         );
     END COMPONENT neander;
 
-    SIGNAL count_load, enable_ula, enable_pc, flag_negative : STD_LOGIC := '0';
-    SIGNAL flag_zero : STD_LOGIC;
+    SIGNAL count_load, enable_ula, flag_negative : STD_LOGIC := '0';
+    SIGNAL flag_zero : STD_LOGIC := '0';
     SIGNAL decoder : STD_LOGIC_VECTOR(3 DOWNTO 0) := "0000";
+    
 BEGIN
     neander_inst : neander PORT MAP(
         clk => clk,

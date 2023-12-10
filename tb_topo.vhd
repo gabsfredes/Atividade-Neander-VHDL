@@ -2,26 +2,26 @@ LIBRARY ieee;
 USE ieee.numeric_std.ALL;
 USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_unsigned.ALL;
+ 
+ENTITY tb_topo IS
+END ENTITY tb_topo;
 
-ENTITY tb_neander IS
-END ENTITY tb_neander;
-
-ARCHITECTURE behavior OF tb_neander IS
+ARCHITECTURE rtl OF tb_topo IS
     COMPONENT topo IS
         PORT (
             clk : IN STD_LOGIC;
-            reset : IN STD_LOGIC
+            rst : IN STD_LOGIC
         );
     END COMPONENT topo;
 
     SIGNAL clk : STD_LOGIC;
-    SIGNAL reset : STD_LOGIC;
+    SIGNAL rst : STD_LOGIC;
 
 BEGIN
-    arquivo : topo
+    uut : topo
     PORT MAP(
         clk => clk,
-        reset => reset
+        rst => rst
     );
 
     clk_gen : PROCESS
@@ -32,5 +32,11 @@ BEGIN
         WAIT FOR 10 ns;
     END PROCESS clk_gen;
 
-    reset <= '1', '0' AFTER 10 ns;
-END ARCHITECTURE behavior;
+    -- rst_gen : process
+    -- begin
+    --     rst <= '1';
+    --     wait for 20 ns;
+    --     rst <= '0';
+    --     wait;
+    -- end process rst_gen;
+END ARCHITECTURE rtl;
