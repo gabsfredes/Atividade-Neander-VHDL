@@ -21,14 +21,14 @@ ARCHITECTURE behavior OF neander IS
     TYPE valores IS ARRAY (0 TO 15) OF STD_LOGIC_VECTOR(7 DOWNTO 0);--vetor de 16 posições de 8 bits
 
     -- alterar aqui a memória, infelizmente não consegui implementar com leitura do arquivo
-    SIGNAL memoria : valores := (0 => "00000010",
-    1 => "00010010",
-    2 => "00110010",
-    3 => "00010010",
-    4 => "00101010",
-    5 => "00100101",
-    6 => "00000000",
-    7 => "00000000",
+    SIGNAL memoria : valores := (0 => "00000001",
+    1 => "00100101",
+    2 => "00010101",
+    3 => "00100001",
+    4 => "00010010",
+    5 => "00110010",
+    6 => "00100101",
+    7 => "01010000",
     8 => "00000000",
     9 => "00000000",
     10 => "00000000",
@@ -44,8 +44,8 @@ ARCHITECTURE behavior OF neander IS
     -- MUX e operações
 
     SIGNAL MUX : STD_LOGIC_VECTOR(7 DOWNTO 0);
-    SIGNAL SOMA : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL SUB : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL SOMA : STD_LOGIC_VECTOR(7 DOWNTO 0);
+    SIGNAL SUB : STD_LOGIC_VECTOR(7 DOWNTO 0);
     SIGNAL MULT : STD_LOGIC_VECTOR(7 DOWNTO 0);
 
     -- registradores
@@ -62,16 +62,16 @@ BEGIN
     N <= flagN;
 
     -- implementações das operações
-    SOMA <= RDM(3 DOWNTO 0) + ACC(3 DOWNTO 0);
-    SUB <= RDM(3 DOWNTO 0) - ACC(3 DOWNTO 0);
+    SOMA <= RDM(3 DOWNTO 0) + ACC;
+    SUB <= ACC - RDM(3 DOWNTO 0);
     MULT <= ACC(3 DOWNTO 0) * RDM(3 DOWNTO 0); -- multiplicação é feita com o ACC e os 4 bits menos significativos do RDM
 
     -- mux
     -- o uso dos bits 4 e 5 do RDM é para indicar qual operação será feita, conforme visualizado no logisim
     MUX <= MULT WHEN (RDM(5) = '1' AND RDM(4) = '1') ELSE -- multiplicacao
         "0000" & RDM(3 DOWNTO 0) WHEN (RDM(5) = '0' AND RDM(4) = '0') ELSE -- load
-        "0000" & SOMA(3 DOWNTO 0) WHEN (RDM(5) = '0' AND RDM(4) = '1') ELSE -- soma
-        "0000" & SUB(3 DOWNTO 0) WHEN (RDM(5) = '1' AND RDM(4) = '0'); -- subtração
+        SOMA WHEN (RDM(5) = '0' AND RDM(4) = '1') ELSE -- soma
+        SUB WHEN (RDM(5) = '1' AND RDM(4) = '0'); -- subtração
     PROCESS (clk, reset)
     BEGIN
         -- zera tudo pra não ter problema de lixo
@@ -112,7 +112,7 @@ BEGIN
         ELSE
             flagZ <= '0';
         END IF;
-        IF ACC(7) = '1' THEN
+        IF ACC(3) = '1' THEN
             flagN <= '1';
         ELSE
             flagN <= '0';

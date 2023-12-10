@@ -49,15 +49,15 @@ BEGIN
                     next_state <= jumps;
                     -- se o decoder for 0101, jump N, flag zero = 1
                 ELSIF decoder = "0101" THEN
-                    -- se flag zero = 1, vai para o estado de jumps se nao fica no estado inicial
-                    IF flag_zero = '1' THEN
+                    -- se flag negativo = 1, vai para o estado de jumps se nao fica no estado inicial
+                    IF flag_negative = '1' THEN
                         next_state <= jumps;
                     ELSE
                         next_state <= inicial;
                     END IF;
                 ELSIF decoder = "0110" THEN
                     -- se flag zero = 0, vai para o estado de jumps se nao fica no estado inicial
-                    IF flag_negative = '1' THEN
+                    IF flag_zero = '1' THEN
                         next_state <= jumps;
                     ELSE
                         next_state <= inicial;
@@ -80,15 +80,15 @@ BEGIN
                     next_state <= jumps;
                     -- se o decoder for 0101, jump N, flag zero = 1
                 ELSIF decoder = "0101" THEN
-                    -- se flag zero = 1, vai para o estado de jumps se nao fica no estado inicial
-                    IF flag_zero = '1' THEN
+                    -- se flag negativo = 1, vai para o estado de jumps se nao fica no estado inicial
+                    IF flag_negative = '1' THEN
                         next_state <= jumps;
                     ELSE
                         next_state <= inicial;
                     END IF;
                 ELSIF decoder = "0110" THEN
                     -- se flag zero = 0, vai para o estado de jumps se nao fica no estado inicial
-                    IF flag_negative = '1' THEN
+                    IF flag_zero = '1' THEN
                         next_state <= jumps;
                     ELSE
                         next_state <= inicial;
@@ -96,6 +96,8 @@ BEGIN
                 ELSE
                     next_state <= inicial;
                 END IF;
+
+                
             WHEN OTHERS =>
                 next_state <= inicial;
         END CASE;
