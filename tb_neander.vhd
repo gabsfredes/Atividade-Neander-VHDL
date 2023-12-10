@@ -16,18 +16,27 @@ ARCHITECTURE behavior OF tb_neander IS
             -- saidas
             Z : OUT STD_LOGIC;
             N : OUT STD_LOGIC;
-            decoder : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
+            decoder : OUT STD_LOGIC_VECTOR(3 DOWNTO 0)
         );
     END COMPONENT;
 
-    SIGNAL clk, reset, count_load, en_ULA, Z, N : STD_LOGIC;
+    SIGNAL clk, reset, Z, N : STD_LOGIC;
+    SIGNAL count_load, en_ULA : STD_LOGIC := '1';
     SIGNAL decoder : STD_LOGIC_VECTOR(3 DOWNTO 0);
 
 BEGIN
-    -- instanciando o componente (topo)
-    
-    DUT : ENTITY work.neander PORT MAP (clk => clk, reset => reset, count_load => count_load, en_ULA => en_ULA);
-    -- clock process
+    -- instanciando o componente (topo) com DUT
+    DUT : neander PORT MAP(
+        reset => reset,
+        clk => clk,
+        count_load => count_load,
+        en_ULA => en_ULA,
+        Z => Z,
+        N => N,
+        decoder => decoder
+    );
+
+    -- clock a cada 10ns
 
     PROCESS
     BEGIN
@@ -37,6 +46,7 @@ BEGIN
         WAIT FOR 10 ns;
     END PROCESS;
 
-    reset <= '0', '1' AFTER 10 ns; -- reset ativo em 10ns
+    --reset no começo depois volta pra 1
+    reset <= '0', '1' AFTER 10 ns;
 
 END ARCHITECTURE;

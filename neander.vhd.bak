@@ -1,7 +1,8 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
+LIBRARY IEEE;
+USE IEEE.std_logic_1164.ALL;
+USE IEEE.std_logic_unsigned.ALL;
+USE IEEE.std_logic_arith.ALL;
+USE IEEE.std_logic_textio.ALL;
 
 ENTITY neander IS
     PORT (
@@ -24,7 +25,7 @@ ARCHITECTURE behavior OF neander IS
     SIGNAL memoria : valores := (0 => "00000001",
     1 => "00010001",
     2 => "00010011",
-    3 => "00101010",
+    3 => "00100110",
     4 => "00000000",
     5 => "00000000",
     6 => "00000000",
@@ -59,9 +60,9 @@ ARCHITECTURE behavior OF neander IS
     ----------------------------------------------
 BEGIN
     -- implementações das operações
-    SOMA <= ACC + RDM(3 DOWNTO 0);
-    SUB <= ACC - RDM(3 DOWNTO 0);
-    MULT <= ACC * RDM(3 DOWNTO 0);
+    SOMA <= RDM(3 DOWNTO 0) + ACC;
+    SUB <= RDM(3 DOWNTO 0) - ACC;
+    MULT <= RDM(3 DOWNTO 0) * ACC;
 
     -- mux
     -- o uso dos bits 4 e 5 do RDM é para indicar qual operação será feita, conforme visualizado no logisim
@@ -83,6 +84,8 @@ BEGIN
             PC <= (OTHERS => '0');
             ACC <= (OTHERS => '0');
             RDM <= (OTHERS => '0');
+            count_load <= '0';
+            en_ULA <= '0';
             Z <= '0';
             N <= '0';
             decoder <= (OTHERS => '0');
