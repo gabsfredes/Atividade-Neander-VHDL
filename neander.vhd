@@ -22,8 +22,8 @@ ARCHITECTURE behavior OF neander IS
     TYPE valores IS ARRAY (0 TO 15) OF STD_LOGIC_VECTOR(7 DOWNTO 0);--vetor de 16 posi��es de 8 bits
 
     -- alterar aqui a memória, infelizmente não consegui implementar com leitura do arquivo
-    SIGNAL memoria : valores := (0 => "10100001",
-    1 => "10100001",
+    SIGNAL memoria : valores := (0 => "00000001",
+    1 => "00010001",
     2 => "00000000",
     3 => "00000000",
     4 => "00000000",

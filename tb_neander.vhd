@@ -24,11 +24,11 @@ ARCHITECTURE behavior OF tb_neander IS
     SIGNAL decoder : STD_LOGIC_VECTOR(3 DOWNTO 0);
 
 BEGIN
-
+    -- instanciando o componente (topo)
     
     DUT : ENTITY work.neander PORT MAP (clk => clk, reset => reset, count_load => count_load, en_ULA => en_ULA);
     -- clock process
-    
+
     PROCESS
     BEGIN
         clk <= '0';
