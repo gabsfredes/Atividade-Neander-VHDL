@@ -20,7 +20,7 @@ ARCHITECTURE behavior OF fsm IS
     TYPE states IS (inicial, jumps, opera);
     SIGNAL state : states;
     SIGNAL next_state : states := inicial;
- 
+
 BEGIN
     PROCESS (clk, reset)
     BEGIN
@@ -61,9 +61,30 @@ BEGIN
                     next_state <= inicial;
                 END IF;
             WHEN opera =>
-                next_state <= inicial;
-            WHEN jumps =>
-                next_state <= inicial;
+                -- se o decoder for 0000, 0001, 0010 ou 0011, vai para o estado de opera
+                IF decoder = "0000" OR decoder = "0001" OR decoder = "0010" OR decoder = "0011" THEN
+                    next_state <= opera;
+                    -- se o decoder for 0100, jump normal (flag zero = 0 e flag negative = 0)
+                ELSIF decoder = "0100" THEN
+                    next_state <= jumps;
+                    -- se o decoder for 0101, jump N, flag zero = 1
+                ELSIF decoder = "0101" THEN
+                    -- se flag zero = 1, vai para o estado de jumps se nao fica no estado inicial
+                    IF flag_zero = '1' THEN
+                        next_state <= jumps;
+                    ELSE
+                        next_state <= inicial;
+                    END IF;
+                ELSIF decoder = "0110" THEN
+                    -- se flag zero = 0, vai para o estado de jumps se nao fica no estado inicial
+                    IF flag_negative = '1' THEN
+                        next_state <= jumps;
+                    ELSE
+                        next_state <= inicial;
+                    END IF;
+                ELSE
+                    next_state <= inicial;
+                END IF;
             WHEN OTHERS =>
                 next_state <= inicial;
         END CASE;

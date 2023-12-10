@@ -23,8 +23,8 @@ ARCHITECTURE behavior OF neander IS
     -- alterar aqui a memória, infelizmente não consegui implementar com leitura do arquivo
     SIGNAL memoria : valores := (0 => "00000001",
     1 => "00011010",
-    2 => "00100001",
-    3 => "01000000",
+    2 => "00100011",
+    3 => "01001010",
     4 => "00000000",
     5 => "00000000",
     6 => "00000000",
