@@ -26,7 +26,7 @@ ARCHITECTURE behavior OF neander IS
     2 => "00110010",
     3 => "00010010",
     4 => "00101010",
-    5 => "01100000",
+    5 => "00100101",
     6 => "00000000",
     7 => "00000000",
     8 => "00000000",
@@ -57,9 +57,13 @@ ARCHITECTURE behavior OF neander IS
     SIGNAL flagN : STD_LOGIC; -- flag se ACC < 0
     ----------------------------------------------
 BEGIN
+    --flags
+    Z <= flagZ;
+    N <= flagN;
+
     -- implementações das operações
-    SOMA <= ACC(3 DOWNTO 0) + RDM(3 DOWNTO 0);
-    SUB <= ACC(3 DOWNTO 0) - RDM(3 DOWNTO 0);
+    SOMA <= RDM(3 DOWNTO 0) + ACC(3 DOWNTO 0);
+    SUB <= RDM(3 DOWNTO 0) - ACC(3 DOWNTO 0);
     MULT <= ACC(3 DOWNTO 0) * RDM(3 DOWNTO 0); -- multiplicação é feita com o ACC e os 4 bits menos significativos do RDM
 
     -- mux
@@ -68,16 +72,6 @@ BEGIN
         "0000" & RDM(3 DOWNTO 0) WHEN (RDM(5) = '0' AND RDM(4) = '0') ELSE -- load
         "0000" & SOMA(3 DOWNTO 0) WHEN (RDM(5) = '0' AND RDM(4) = '1') ELSE -- soma
         "0000" & SUB(3 DOWNTO 0) WHEN (RDM(5) = '1' AND RDM(4) = '0'); -- subtração
-
-    -- flags
-    flagZ <= '1' WHEN (ACC = "00000000") ELSE
-        '0';
-    flagN <= '1' WHEN (ACC(3) = '1') ELSE
-        '0';
-
-    -- saidas
-    Z <= flagZ;
-    N <= flagN;
     PROCESS (clk, reset)
     BEGIN
         -- zera tudo pra não ter problema de lixo
@@ -85,8 +79,6 @@ BEGIN
             PC <= (OTHERS => '0');
             ACC <= (OTHERS => '0');
             RDM <= (OTHERS => '0');
-            Z <= '0';
-            N <= '0';
             decoder <= (OTHERS => '0');
 
         ELSIF rising_edge(clk) THEN
@@ -108,6 +100,22 @@ BEGIN
                 ACC <= MUX;
             END IF;
 
+        END IF;
+    END PROCESS;
+
+    PROCESS (ACC, clk)
+    BEGIN
+        --flag n, se ACC é um numero negativo
+        --flag z, se ACC é zero 
+        IF ACC = "00000000" THEN
+            flagZ <= '1';
+        ELSE
+            flagZ <= '0';
+        END IF;
+        IF ACC(7) = '1' THEN
+            flagN <= '1';
+        ELSE
+            flagN <= '0';
         END IF;
     END PROCESS;
 END ARCHITECTURE;
