@@ -39,6 +39,11 @@ BEGIN
                 -- se o decoder for 0000, 0001, 0010 ou 0011, vai para o estado de opera
                 IF decoder = "0000" OR decoder = "0001" OR decoder = "0010" OR decoder = "0011" THEN
                     next_state <= opera;
+
+                    ----------------------------------------
+                    -- jumps
+                    ----------------------------------------
+
                     -- se o decoder for 0100, jump normal (flag zero = 0 e flag negative = 0)
                 ELSIF decoder = "0100" THEN
                     next_state <= jumps;
@@ -60,10 +65,16 @@ BEGIN
                 ELSE
                     next_state <= inicial;
                 END IF;
+
             WHEN opera =>
                 -- se o decoder for 0000, 0001, 0010 ou 0011, vai para o estado de opera
                 IF decoder = "0000" OR decoder = "0001" OR decoder = "0010" OR decoder = "0011" THEN
                     next_state <= opera;
+
+                    ----------------------------------------
+                    -- jumps
+                    ----------------------------------------
+
                     -- se o decoder for 0100, jump normal (flag zero = 0 e flag negative = 0)
                 ELSIF decoder = "0100" THEN
                     next_state <= jumps;

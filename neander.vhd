@@ -21,12 +21,12 @@ ARCHITECTURE behavior OF neander IS
     TYPE valores IS ARRAY (0 TO 15) OF STD_LOGIC_VECTOR(7 DOWNTO 0);--vetor de 16 posições de 8 bits
 
     -- alterar aqui a memória, infelizmente não consegui implementar com leitura do arquivo
-    SIGNAL memoria : valores := (0 => "00000001",
-    1 => "00011010",
-    2 => "00100011",
-    3 => "01001010",
-    4 => "00000000",
-    5 => "00000000",
+    SIGNAL memoria : valores := (0 => "00000010",
+    1 => "00010010",
+    2 => "00110010",
+    3 => "00010010",
+    4 => "00101010",
+    5 => "01100000",
     6 => "00000000",
     7 => "00000000",
     8 => "00000000",
@@ -51,26 +51,26 @@ ARCHITECTURE behavior OF neander IS
     -- registradores
 
     SIGNAL PC : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL ACC : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL ACC : STD_LOGIC_VECTOR(7 DOWNTO 0);
     SIGNAL RDM : STD_LOGIC_VECTOR(7 DOWNTO 0); -- registrador de memoria
     SIGNAL flagZ : STD_LOGIC; -- flag se ACC = 0
     SIGNAL flagN : STD_LOGIC; -- flag se ACC < 0
     ----------------------------------------------
 BEGIN
     -- implementações das operações
-    SOMA <= ACC + RDM(3 DOWNTO 0);
-    SUB <= ACC - RDM(3 DOWNTO 0);
-    MULT <= ACC * RDM(3 DOWNTO 0);
+    SOMA <= ACC(3 DOWNTO 0) + RDM(3 DOWNTO 0);
+    SUB <= ACC(3 DOWNTO 0) - RDM(3 DOWNTO 0);
+    MULT <= ACC(3 DOWNTO 0) * RDM(3 DOWNTO 0); -- multiplicação é feita com o ACC e os 4 bits menos significativos do RDM
 
     -- mux
     -- o uso dos bits 4 e 5 do RDM é para indicar qual operação será feita, conforme visualizado no logisim
-    MUX <= "0000" & RDM(3 DOWNTO 0) WHEN (RDM(5) = '0' AND RDM(4) = '0') ELSE -- load
+    MUX <= MULT WHEN (RDM(5) = '1' AND RDM(4) = '1') ELSE -- multiplicacao
+        "0000" & RDM(3 DOWNTO 0) WHEN (RDM(5) = '0' AND RDM(4) = '0') ELSE -- load
         "0000" & SOMA(3 DOWNTO 0) WHEN (RDM(5) = '0' AND RDM(4) = '1') ELSE -- soma
-        "0000" & SUB(3 DOWNTO 0) WHEN (RDM(5) = '1' AND RDM(4) = '0') ELSE -- subtração
-        MULT WHEN (RDM(5) = '1' AND RDM(4) = '1'); -- multiplicaação
+        "0000" & SUB(3 DOWNTO 0) WHEN (RDM(5) = '1' AND RDM(4) = '0'); -- subtração
 
     -- flags
-    flagZ <= '1' WHEN (ACC = "0000") ELSE
+    flagZ <= '1' WHEN (ACC = "00000000") ELSE
         '0';
     flagN <= '1' WHEN (ACC(3) = '1') ELSE
         '0';
@@ -100,8 +100,14 @@ BEGIN
                 decoder <= RDM(7 DOWNTO 4);
             END IF;
             IF en_ULA = '1' THEN
-                ACC <= MUX(3 DOWNTO 0);
+                ACC <= MUX;
             END IF;
+
+            -- coloca o mux no acc caso pc = 1 e decoder = 0000, 0001, 0010 ou 0011 
+            IF (PC = "0001" AND decoder = "0000") OR (PC = "0001" AND decoder = "0001") OR (PC = "0001" AND decoder = "0010") OR (PC = "0001" AND decoder = "0011") THEN
+                ACC <= MUX;
+            END IF;
+
         END IF;
     END PROCESS;
 END ARCHITECTURE;
